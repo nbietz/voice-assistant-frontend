@@ -23,6 +23,8 @@ export default function Page() {
     dynacast: true,
   }));
 
+  const [isConnecting, setIsConnecting] = useState(true);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -34,9 +36,11 @@ export default function Page() {
           const url = process.env.NEXT_PUBLIC_LIVEKIT_URL;
           if (!url) throw new Error("NEXT_PUBLIC_LIVEKIT_URL is not set");
           await roomInstance.connect(url, data.token);
+          setIsConnecting(false);
         }
       } catch (e) {
         console.error(e);
+        setIsConnecting(false);
       }
     })();
   
@@ -46,7 +50,7 @@ export default function Page() {
     };
   }, [roomInstance]);
 
-  if (token === '') {
+  if (isConnecting) {
     return <div>Getting token...</div>;
   }
 
